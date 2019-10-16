@@ -3,6 +3,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
+from rest_framework import generics, permissions
 from ...tokens import account_activation_token
 from ...forms.auth.forms import AuthForm
 from ...forms.auth.forms import NewPassForm
@@ -12,6 +13,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import EmailMessage
+import json
 
 
 def activate(request, uidb64, token):
@@ -40,38 +42,29 @@ def activate(request, uidb64, token):
 
 
 def signup(request):
-    if request.method == 'POST':
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
+    if request.body is not None:
+        res = json.loads(request.body)
+        if res['username'] is not None:
+            user = User.objects.create_user(res['username'], res['email'], res['password'])
             user.save()
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             authenticate(request, email=user)
-            return redirect('/')
+            return HttpResponse('ok')
+        else:
+            try:
+                user = User.objects.filter(email=res['email'])
+                login(request, user, backend='skill.backends.EmailAuthBackend')
+            except(TypeError, ValueError, OverflowError, User.DoesNotExist, IndexError):
+                user = None
+            return HttpResponse('ok')
     else:
         form = SignupForm()
-    return render(request, 'auth/signup.html', {'form': form})
-
-
-def signin(request):
-    if request.method == 'POST':
-        try:
-            user = User.objects.filter(email=request.POST.get('email'))[0]
-            login(request, user, backend='skill.backends.EmailAuthBackend')
-        except(TypeError, ValueError, OverflowError, User.DoesNotExist, IndexError):
-            user = None
-
-        return redirect('/signin/')
-
-    else:
-        form = AuthForm()
-        return render(request, 'auth/signin.html', {'form': form})
+        return render(request, 'auth/signup.html', {'form': form})
 
 
 def exit(request):
     logout(request)
-    return redirect('/signin/')
+    return redirect('/')
 
 
 def forgot(request):

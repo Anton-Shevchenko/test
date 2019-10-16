@@ -5,8 +5,9 @@ import cookie from "react-cookies";
 
 class Payment extends Component {
 
-    createPost(data) {
-        const endpoint = '/list/';
+    createOrder(data) {
+
+        const endpoint = '/order/';
         const csrfToken = cookie.load('csrftoken');
         let thisComp = this;
         if (csrfToken !== undefined) {
@@ -33,14 +34,43 @@ class Payment extends Component {
         }
     }
 
+    handleSubmit(event) {
+        event.preventDefault();
+        // console.log(this.state)
+        let data = this.state;
 
+        // console.log(data)
+        this.createPost(data)
+    }
 
     render() {
         return (
-            <div>
-                <h1>Payment pagesssssss</h1>
-            </div>
-        );
+            <form>
+                <div className='form-group'>
+                    <label for='title'>Post title</label>
+                    <input type='text' id='title' name='title' className='form-control' placeholder='Blog post title'
+                           required='required'/>
+                </div>
+                <div className='form-group'>
+                    <label for='content'>Content</label>
+                    <textarea id='content' name='content' className='form-control' placeholder='Post content'
+                              required='required'/>
+
+                </div>
+                <div className='form-group'>
+                    <label for='draft'>
+                        <input type='checkbox' id='draft' name='draft' className='mr-2'
+                        />
+                        Draft </label>
+                </div>
+                <div className='form-group'>
+                    <label for='publish'>Publish Date</label>
+                    <input type='date' id='publish' name='publish' className='form-control'
+                           required='required'/>
+                </div>
+                <button className='btn btn-primary'>Save</button>
+            </form>
+        )
     }
 }
 

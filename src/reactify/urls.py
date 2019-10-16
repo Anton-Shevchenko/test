@@ -19,8 +19,6 @@ from django.urls import path, include, re_path
 
 
 urlpatterns = [
-    path('react/', TemplateView.as_view(template_name='react.html')),
-    path('payment/', TemplateView.as_view(template_name='react.html')),
     path('admin/', admin.site.urls),
     path('', include('skill.urls'))
 ]

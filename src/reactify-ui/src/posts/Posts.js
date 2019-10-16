@@ -91,7 +91,7 @@ class Posts extends Component {
   }
 
   toggleBuy(event){
-      console.log('aaa');
+
   }
 
   componentDidMount(){

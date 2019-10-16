@@ -1,30 +1,30 @@
-import React, { Component } from 'react';
-import Modal from './Modals/Modal';
+import React, {Component} from 'react';
+import Modal from './Modals/Auth';
 
 class Windows extends Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
+        this.state = {isOpen: false};
+    }
 
-    this.state = { isOpen: false };
-  }
+    toggleModal = () => {
+        console.log('mod');
+        this.setState({
+            isOpen: !this.state.isOpen
+        });
+    };
 
-  toggleModal = () => {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-  };
-
-  render() {
-    return (
-      <div className="App">
-          <a onClick={this.toggleModal} className="navbar-brand text-success">Open the modal</a>
-        <Modal show={this.state.isOpen}
-          onClose={this.toggleModal}>
-          Here's some content for the modal
-        </Modal>
-      </div>
-    );
-  }
+    render() {
+        return (
+            <div className="App">
+                <a onClick={this.toggleModal} className="navbar-brand text-success">Open the modal</a>
+                <Modal show={this.state.isOpen}
+                       onClose={this.toggleModal}>
+                    Here's some content for the modal
+                </Modal>
+            </div>
+        );
+    }
 }
 
 export default Windows;
